@@ -27,12 +27,6 @@ public class PercolationStats {
       double fraction = (double) p.numberOfOpenSites() / (n * n);
       fractions[trialNum] = fraction;
     }
-
-    Runtime runtime = Runtime.getRuntime();
-
-    long memory = runtime.totalMemory() - runtime.freeMemory();
-    System.out.println("Used memory is bytes: " + memory);
-    System.out.println("Used memory is megabytes: " + (memory / 1024L));
   }
 
   public double mean() {
