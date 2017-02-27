@@ -19,6 +19,7 @@ public class Percolation {
   }
 
   public void open(int row, int col) {
+    if (isOpen(row, col)) return;
     if (isOutOfOpenRange(row, col)) throw new IndexOutOfBoundsException();
     opened[row - 1][col - 1] = true;
     openCount++;
@@ -65,9 +66,9 @@ public class Percolation {
   }
 
   public static void main(String[] args) {
-    int N = StdIn.readInt();
+    int n = StdIn.readInt();
 
-    Percolation p = new Percolation(N);
+    Percolation p = new Percolation(n);
 
     while (!StdIn.isEmpty()) {
       int q = StdIn.readInt();

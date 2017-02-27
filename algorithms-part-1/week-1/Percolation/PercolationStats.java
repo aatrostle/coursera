@@ -1,4 +1,3 @@
-import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
@@ -17,7 +16,7 @@ public class PercolationStats {
     for (int trialNum = 0; trialNum < trialsCount; trialNum++) {
       p = new Percolation(n);
 
-      while(!p.percolates()) {
+      while (!p.percolates()) {
         int i = StdRandom.uniform(1, n + 1);
         int j = StdRandom.uniform(1, n + 1);
         if (!p.isOpen(i, j)) {
@@ -30,9 +29,7 @@ public class PercolationStats {
     }
 
     Runtime runtime = Runtime.getRuntime();
-    // Run the garbage collector
-    runtime.gc();
-    // Calculate the used memory
+
     long memory = runtime.totalMemory() - runtime.freeMemory();
     System.out.println("Used memory is bytes: " + memory);
     System.out.println("Used memory is megabytes: " + (memory / 1024L));
