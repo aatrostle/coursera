@@ -3,8 +3,7 @@ import java.util.NoSuchElementException;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Deque<Item> implements Iterable<Item> {
-  private Node first;
-  private Node last;
+  private Node first, last;
   private int count;
 
   private class Node {
@@ -13,7 +12,7 @@ public class Deque<Item> implements Iterable<Item> {
     private Node next;
 
     Node(Item item) {
-      item = item;
+      this.item = item;
       next = null;
       prev = null;
     }
@@ -31,98 +30,86 @@ public class Deque<Item> implements Iterable<Item> {
 
   public void addFirst(Item item) {
     if (item == null) throw new NullPointerException();
-    if (isEmpty()) {
-      first = new Node(item);
-      last = first;
+    Node oldFirst = first;
+    first = new Node(item);
+    first.next = oldFirst;
+    if (size() > 0) {
+      oldFirst.prev = first;
     } else {
-      Node node = new Node(item);
-      node.next = first;
-      first.prev = node;
-      first = node;
+      last = first;
     }
     count++;
   }
 
   public void addLast(Item item) {
     if (item == null) throw new NullPointerException();
-    if (isEmpty()) {
-      last = new Node(item);
-      first = last;
+    Node oldLast = last;
+    last = new Node(item);
+    last.prev = oldLast;
+    if (size() > 0) {
+      oldLast.next = last;
     } else {
-      Node node = new Node(item);
-      last.next = node;
-      node.prev = last;
-      last = node;
+      first = last;
     }
     count++;
   }
 
   public Item removeFirst() {
     if (isEmpty()) throw new NoSuchElementException();
-    Node node = first;
-    if (this.size() == 1) {
+    Item item = first.item;
+    if (size() > 1) {
+      first = first.next;
+      first.prev = null;
+    } else {
       first = null;
       last = null;
-    } else {
-      first.next.prev = null;
-      first = first.next;
     }
     count--;
-    node.next = null;
-    return node.item;
+    return item;
   }
 
   public Item removeLast() {
     if (isEmpty()) throw new NoSuchElementException();
-    Node node = first;
-    if (this.size() == 1) {
+
+    Item item = last.item;
+    if (size() > 1) {
+      last = last.prev;
+      last.next = null;
+    } else {
       first = null;
       last = null;
-    } else {
-      last.prev.next = null;
-      last = last.prev;
     }
     count--;
-    node.next = null;
-    return node.item;
+    return item;
   }
 
   public Iterator<Item> iterator() { return new DequeIterator(); }
 
   private class DequeIterator implements Iterator<Item> {
-    private Node current;
-
-    public DequeIterator() {
-      current = first;
-    }
+    private Node current = first;
 
     public boolean hasNext() { return current != null; }
 
     public void remove() { throw new UnsupportedOperationException(); }
 
     public Item next() {
-      if (hasNext()) {
-        throw new NoSuchElementException();
-      } else {
-        Node node = current;
-        current = current.next;
-        return node.item;
-      }
+      if (current == null) throw new NoSuchElementException();
+      Item value = current.item;
+      current = current.next;
+      return value;
     }
   }
 
   public static void main(String[] args) {
-    Deque<String> d = new Deque<String>();
+    Deque<Integer> d = new Deque<Integer>();
 
-    StdOut.println("d: " + d.size());
-
-    d.addFirst("hello");
-    d.addLast("world");
-    StdOut.println("d: " + d.size());
-
-    d.removeFirst();
-    StdOut.println("d: " + d.size());
-    d.removeFirst();
-    StdOut.println("d: " + d.size());
+    d.addFirst(0);
+    d.addFirst(1);
+    d.addFirst(2);
+    d.addFirst(3);
+    d.addFirst(4);
+    d.addFirst(5);
+    d.addFirst(6);
+    StdOut.println(d.removeFirst());
   }
 }

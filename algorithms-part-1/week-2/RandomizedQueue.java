@@ -1,26 +1,23 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.StdOut;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
   private Item[] resizingArray;
-  private int max;
-  private int count;
+  private int count = 0;
 
   public RandomizedQueue() {
-    count = 0;
-    max = 10;
-    resizingArray = (Item[]) new Object[max]; // NOTE Eww! Casting!
+    resizingArray = (Item[]) new Object[2]; // NOTE Eww! Casting!
   }
 
-  public boolean isEmpty() { return size() == 0; }
+  public boolean isEmpty() { return count == 0; }
 
   public int size() { return count; }
 
   public void enqueue(Item item) {
     if (item == null) throw new NullPointerException();
-    if (size() == resizingArray.length) { resize(2 * resizingArray.length); }
+    if (count == resizingArray.length) { resize(2 * resizingArray.length); }
 
     resizingArray[count++] = item;
   }
@@ -29,13 +26,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     if (isEmpty()) throw new NoSuchElementException();
     int rand = StdRandom.uniform(count);
 
-    while (resizingArray[rand] == null) { rand = StdRandom.uniform(resizingArray.length); }
-
     Item toRemove = resizingArray[rand];
-    resizingArray[rand] = null;
+    resizingArray[rand] = resizingArray[count - 1];
+    resizingArray[count - 1] = null;
     count--;
 
-    if (fractionOccupied() < 0.25f) { resize(resizingArray.length / 2); }
+    if (count > 0 && count == resizingArray.length / 4) { resize(resizingArray.length / 2); }
 
     return toRemove;
   }
@@ -73,7 +69,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         throw new NoSuchElementException();
       } else {
         int rand = StdRandom.uniform(items.length);
-        while(items[rand] == null) { rand = StdRandom.uniform(items.length); }
+        while (items[rand] == null) { rand = StdRandom.uniform(items.length); }
 
         Item elem = items[rand];
         items[rand] = null;
@@ -87,31 +83,33 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
   private void resize(int size) {
     Item[] nextArray = (Item[]) new Object[size]; // NOTE Eww! Casting!
 
-    int j = 0;
-    for (int i = 0; i < resizingArray.length; i++) {
-      if (resizingArray[i] != null) {
-        nextArray[j++] = resizingArray[i];
-      }
+    for (int i = 0; i < count; i++) {
+      nextArray[i] = resizingArray[i];
     }
 
     resizingArray = nextArray;
   }
 
   private float fractionOccupied() {
-    float M = (float) resizingArray.length;
-    float C = (float) count;
-    return C / M;
+    float m = (float) resizingArray.length;
+    float c = (float) count;
+    return c / m;
   }
 
   public static void main(String[] args) {
-    RandomizedQueue<String> rq = new RandomizedQueue<String>();
+    RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
 
-    rq.enqueue("1");
-    rq.enqueue("2");
-    rq.enqueue("3");
-    rq.enqueue("4");
-    rq.enqueue("5");
-    // rq.dequeue();
+    rq.enqueue(732);
+    StdOut.println(rq.dequeue());
+    StdOut.println(rq.size());
+    StdOut.println(rq.isEmpty());
+    rq.enqueue(790);
+    StdOut.println(rq.dequeue());
+    rq.enqueue(337);
+    StdOut.println(rq.dequeue());
+    rq.enqueue(728);
+    StdOut.println(rq.dequeue());
+    rq.enqueue(644);
 
     // StdOut.println("rq#sample: " + rq.sample());
     // StdOut.println("rq: " + rq.length() + ", " + rq.size()); // 16, 9
